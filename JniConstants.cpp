@@ -34,7 +34,6 @@ jclass JniConstants::deflaterClass;
 jclass JniConstants::doubleClass;
 jclass JniConstants::errnoExceptionClass;
 jclass JniConstants::fieldClass;
-jclass JniConstants::fieldPositionIteratorClass;
 jclass JniConstants::fileDescriptorClass;
 jclass JniConstants::floatClass;
 jclass JniConstants::gaiExceptionClass;
@@ -101,7 +100,6 @@ void JniConstants::init(JNIEnv* env) {
     doubleClass = findClass(env, "java/lang/Double");
     errnoExceptionClass = findClass(env, "android/system/ErrnoException");
     fieldClass = findClass(env, "java/lang/reflect/Field");
-    fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     gaiExceptionClass = findClass(env, "android/system/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
