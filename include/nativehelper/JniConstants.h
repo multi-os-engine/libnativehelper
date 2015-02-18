@@ -40,7 +40,6 @@
 struct JniConstants {
     static void init(JNIEnv* env);
 
-    static jclass bidiRunClass;
     static jclass bigDecimalClass;
     static jclass booleanClass;
     static jclass byteArrayClass;
@@ -53,7 +52,6 @@ struct JniConstants {
     static jclass doubleClass;
     static jclass errnoExceptionClass;
     static jclass fieldClass;
-    static jclass fieldPositionIteratorClass;
     static jclass fileDescriptorClass;
     static jclass floatClass;
     static jclass gaiExceptionClass;

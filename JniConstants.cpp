@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-jclass JniConstants::bidiRunClass;
 jclass JniConstants::bigDecimalClass;
 jclass JniConstants::booleanClass;
 jclass JniConstants::byteArrayClass;
@@ -35,7 +34,6 @@ jclass JniConstants::deflaterClass;
 jclass JniConstants::doubleClass;
 jclass JniConstants::errnoExceptionClass;
 jclass JniConstants::fieldClass;
-jclass JniConstants::fieldPositionIteratorClass;
 jclass JniConstants::fileDescriptorClass;
 jclass JniConstants::floatClass;
 jclass JniConstants::gaiExceptionClass;
@@ -86,7 +84,6 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
-    bidiRunClass = findClass(env, "java/text/Bidi$Run");
     bigDecimalClass = findClass(env, "java/math/BigDecimal");
     booleanClass = findClass(env, "java/lang/Boolean");
     byteClass = findClass(env, "java/lang/Byte");
@@ -100,7 +97,6 @@ void JniConstants::init(JNIEnv* env) {
     doubleClass = findClass(env, "java/lang/Double");
     errnoExceptionClass = findClass(env, "android/system/ErrnoException");
     fieldClass = findClass(env, "java/lang/reflect/Field");
-    fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     gaiExceptionClass = findClass(env, "android/system/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
