@@ -1,0 +1,82 @@
+// Copyright (C) 2009 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+local_src_files = [
+    "JNIHelp.cpp",
+    "JniConstants.cpp",
+    "toStringArray.cpp",
+]
+
+//
+// Build for the host and target (device).
+//
+
+cc_library_shared {
+    srcs: local_src_files + ["JniInvocation.cpp"],
+    tags: ["optional"],
+    name: "libnativehelper",
+    host_supported: true,
+    clang: true,
+    cflags: [
+        "-Werror",
+        "-fvisibility=protected",
+    ],
+    local_include_dirs: ["include/nativehelper"],
+    target: {
+        android: {
+            shared_libs: [
+                "liblog",
+                "libcutils",
+                "libdl",
+            ],
+        },
+        host: {
+            shared_libs: [
+                "liblog",
+            ],
+            host_ldlibs: ["-ldl"],
+        },
+    },
+}
+
+//
+// NDK-only build for the target (device), using libc++.
+// - Relies only on NDK exposed functionality.
+// - This doesn't include JniInvocation.
+//
+
+cc_library_shared {
+    tags: ["optional"],
+    name: "libnativehelper_compat_libc++",
+    clang: true,
+    local_include_dirs: ["include/nativehelper"],
+    export_include_dirs: ["include/nativehelper"],
+    cflags: ["-Werror"],
+    srcs: local_src_files,
+    shared_libs: [
+        "liblog",
+        "libdl",
+    ],
+    // ANDROIDMK TRANSLATION ERROR: unsupported assignment to LOCAL_SDK_VERSION
+    // LOCAL_SDK_VERSION:=19
+    // ANDROIDMK TRANSLATION ERROR: unsupported assignment to LOCAL_NDK_STL_VARIANT
+    // LOCAL_NDK_STL_VARIANT:=c++_static
+
+}
+
+//
+// Tests.
+//
+
+subdirs = ["tests"]
