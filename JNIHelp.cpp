@@ -319,7 +319,7 @@ jobject jniCreateFileDescriptor(C_JNIEnv* env, int fd) {
 
 int jniGetFDFromFileDescriptor(C_JNIEnv* env, jobject fileDescriptor) {
     JNIEnv* e = reinterpret_cast<JNIEnv*>(env);
-    static jfieldID fid = e->GetFieldID(JniConstants::fileDescriptorClass, "descriptor", "I");
+    static jfieldID fid = e->GetFieldID(JniConstants::fileDescriptorClass, "fd", "I");
     if (fileDescriptor != NULL) {
         return (*env)->GetIntField(e, fileDescriptor, fid);
     } else {
@@ -329,7 +329,7 @@ int jniGetFDFromFileDescriptor(C_JNIEnv* env, jobject fileDescriptor) {
 
 void jniSetFileDescriptorOfFD(C_JNIEnv* env, jobject fileDescriptor, int value) {
     JNIEnv* e = reinterpret_cast<JNIEnv*>(env);
-    static jfieldID fid = e->GetFieldID(JniConstants::fileDescriptorClass, "descriptor", "I");
+    static jfieldID fid = e->GetFieldID(JniConstants::fileDescriptorClass, "fd", "I");
     (*env)->SetIntField(e, fileDescriptor, fid, value);
 }
 
