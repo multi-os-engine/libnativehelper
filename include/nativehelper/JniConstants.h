@@ -56,6 +56,7 @@ struct JniConstants {
     static jclass gaiExceptionClass;
     static jclass inet6AddressClass;
     static jclass inetAddressClass;
+    static jclass inetAddressHolderClass;
     static jclass inetSocketAddressClass;
     static jclass inflaterClass;
     static jclass inputStreamClass;

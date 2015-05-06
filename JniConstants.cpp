@@ -39,6 +39,7 @@ jclass JniConstants::floatClass;
 jclass JniConstants::gaiExceptionClass;
 jclass JniConstants::inet6AddressClass;
 jclass JniConstants::inetAddressClass;
+jclass JniConstants::inetAddressHolderClass;
 jclass JniConstants::inetSocketAddressClass;
 jclass JniConstants::inflaterClass;
 jclass JniConstants::inputStreamClass;
@@ -104,6 +105,7 @@ void JniConstants::init(JNIEnv* env) {
     gaiExceptionClass = findClass(env, "android/system/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
     inetAddressClass = findClass(env, "java/net/InetAddress");
+    inetAddressHolderClass = findClass(env, "java/net/InetAddress$InetAddressHolder");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
