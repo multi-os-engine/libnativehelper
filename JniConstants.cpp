@@ -41,6 +41,7 @@ jclass JniConstants::inet6AddressClass;
 jclass JniConstants::inetAddressClass;
 jclass JniConstants::inetAddressHolderClass;
 jclass JniConstants::inetSocketAddressClass;
+jclass JniConstants::inetSocketAddressHolderClass;
 jclass JniConstants::inetUnixAddressClass;
 jclass JniConstants::inflaterClass;
 jclass JniConstants::inputStreamClass;
@@ -103,6 +104,7 @@ void JniConstants::init(JNIEnv* env) {
     inetAddressClass = findClass(env, "java/net/InetAddress");
     inetAddressHolderClass = findClass(env, "java/net/InetAddress$InetAddressHolder");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
+    inetSocketAddressHolderClass = findClass(env, "java/net/InetSocketAddress$InetSocketAddressHolder");
     inetUnixAddressClass = findClass(env, "java/net/InetUnixAddress");
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
