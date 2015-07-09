@@ -59,7 +59,6 @@ struct JniConstants {
     static jclass inet6AddressClass;
     static jclass inetAddressClass;
     static jclass inetSocketAddressClass;
-    static jclass inetUnixAddressClass;
     static jclass inflaterClass;
     static jclass inputStreamClass;
     static jclass integerClass;
@@ -93,6 +92,7 @@ struct JniConstants {
     static jclass structTimevalClass;
     static jclass structUcredClass;
     static jclass structUtsnameClass;
+    static jclass unixSocketAddressClass;
     static jclass zipEntryClass;
 };
 
