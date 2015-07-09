@@ -42,7 +42,6 @@ jclass JniConstants::gaiExceptionClass;
 jclass JniConstants::inet6AddressClass;
 jclass JniConstants::inetAddressClass;
 jclass JniConstants::inetSocketAddressClass;
-jclass JniConstants::inetUnixAddressClass;
 jclass JniConstants::inflaterClass;
 jclass JniConstants::inputStreamClass;
 jclass JniConstants::integerClass;
@@ -76,6 +75,7 @@ jclass JniConstants::structStatVfsClass;
 jclass JniConstants::structTimevalClass;
 jclass JniConstants::structUcredClass;
 jclass JniConstants::structUtsnameClass;
+jclass JniConstants::unixSocketAddressClass;
 jclass JniConstants::zipEntryClass;
 
 static jclass findClass(JNIEnv* env, const char* name) {
@@ -109,7 +109,6 @@ void JniConstants::init(JNIEnv* env) {
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
     inetAddressClass = findClass(env, "java/net/InetAddress");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
-    inetUnixAddressClass = findClass(env, "java/net/InetUnixAddress");
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
     integerClass = findClass(env, "java/lang/Integer");
@@ -143,5 +142,6 @@ void JniConstants::init(JNIEnv* env) {
     structTimevalClass = findClass(env, "android/system/StructTimeval");
     structUcredClass = findClass(env, "android/system/StructUcred");
     structUtsnameClass = findClass(env, "android/system/StructUtsname");
+    unixSocketAddressClass = findClass(env, "android/system/UnixSocketAddress");
     zipEntryClass = findClass(env, "java/util/zip/ZipEntry");
 }
