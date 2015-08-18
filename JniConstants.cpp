@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-jclass JniConstants::bidiRunClass;
 jclass JniConstants::bigDecimalClass;
 jclass JniConstants::booleanClass;
 jclass JniConstants::byteArrayClass;
@@ -89,7 +88,6 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
-    bidiRunClass = findClass(env, "java/text/Bidi$Run");
     bigDecimalClass = findClass(env, "java/math/BigDecimal");
     booleanClass = findClass(env, "java/lang/Boolean");
     byteClass = findClass(env, "java/lang/Byte");
