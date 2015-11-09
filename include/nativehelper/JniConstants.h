@@ -73,7 +73,6 @@ struct JniConstants {
     static jclass outputStreamClass;
     static jclass parsePositionClass;
     static jclass patternSyntaxExceptionClass;
-    static jclass realToStringClass;
     static jclass referenceClass;
     static jclass shortClass;
     static jclass socketClass;

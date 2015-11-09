@@ -55,7 +55,6 @@ jclass JniConstants::objectArrayClass;
 jclass JniConstants::outputStreamClass;
 jclass JniConstants::parsePositionClass;
 jclass JniConstants::patternSyntaxExceptionClass;
-jclass JniConstants::realToStringClass;
 jclass JniConstants::referenceClass;
 jclass JniConstants::shortClass;
 jclass JniConstants::socketClass;
@@ -118,7 +117,6 @@ void JniConstants::init(JNIEnv* env) {
     outputStreamClass = findClass(env, "java/io/OutputStream");
     parsePositionClass = findClass(env, "java/text/ParsePosition");
     patternSyntaxExceptionClass = findClass(env, "java/util/regex/PatternSyntaxException");
-    realToStringClass = findClass(env, "java/lang/RealToString");
     referenceClass = findClass(env, "java/lang/ref/Reference");
     shortClass = findClass(env, "java/lang/Short");
     socketClass = findClass(env, "java/net/Socket");
