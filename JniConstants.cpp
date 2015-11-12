@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-jclass JniConstants::bidiRunClass;
 jclass JniConstants::bigDecimalClass;
 jclass JniConstants::booleanClass;
 jclass JniConstants::byteArrayClass;
@@ -35,13 +34,14 @@ jclass JniConstants::deflaterClass;
 jclass JniConstants::doubleClass;
 jclass JniConstants::errnoExceptionClass;
 jclass JniConstants::fieldClass;
-jclass JniConstants::fieldPositionIteratorClass;
 jclass JniConstants::fileDescriptorClass;
 jclass JniConstants::floatClass;
 jclass JniConstants::gaiExceptionClass;
 jclass JniConstants::inet6AddressClass;
 jclass JniConstants::inetAddressClass;
+jclass JniConstants::inetAddressHolderClass;
 jclass JniConstants::inetSocketAddressClass;
+jclass JniConstants::inetSocketAddressHolderClass;
 jclass JniConstants::inetUnixAddressClass;
 jclass JniConstants::inflaterClass;
 jclass JniConstants::inputStreamClass;
@@ -58,7 +58,6 @@ jclass JniConstants::outputStreamClass;
 jclass JniConstants::packetSocketAddressClass;
 jclass JniConstants::parsePositionClass;
 jclass JniConstants::patternSyntaxExceptionClass;
-jclass JniConstants::realToStringClass;
 jclass JniConstants::referenceClass;
 jclass JniConstants::shortClass;
 jclass JniConstants::socketClass;
@@ -89,7 +88,6 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
-    bidiRunClass = findClass(env, "java/text/Bidi$Run");
     bigDecimalClass = findClass(env, "java/math/BigDecimal");
     booleanClass = findClass(env, "java/lang/Boolean");
     byteClass = findClass(env, "java/lang/Byte");
@@ -103,12 +101,13 @@ void JniConstants::init(JNIEnv* env) {
     doubleClass = findClass(env, "java/lang/Double");
     errnoExceptionClass = findClass(env, "android/system/ErrnoException");
     fieldClass = findClass(env, "java/lang/reflect/Field");
-    fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     gaiExceptionClass = findClass(env, "android/system/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
     inetAddressClass = findClass(env, "java/net/InetAddress");
+    inetAddressHolderClass = findClass(env, "java/net/InetAddress$InetAddressHolder");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
+    inetSocketAddressHolderClass = findClass(env, "java/net/InetSocketAddress$InetSocketAddressHolder");
     inetUnixAddressClass = findClass(env, "java/net/InetUnixAddress");
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
@@ -125,7 +124,6 @@ void JniConstants::init(JNIEnv* env) {
     packetSocketAddressClass = findClass(env, "android/system/PacketSocketAddress");
     parsePositionClass = findClass(env, "java/text/ParsePosition");
     patternSyntaxExceptionClass = findClass(env, "java/util/regex/PatternSyntaxException");
-    realToStringClass = findClass(env, "java/lang/RealToString");
     referenceClass = findClass(env, "java/lang/ref/Reference");
     shortClass = findClass(env, "java/lang/Short");
     socketClass = findClass(env, "java/net/Socket");
