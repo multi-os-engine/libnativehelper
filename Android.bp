@@ -1,0 +1,5 @@
+// Empty Android.bp file to work around collision between libnativehelper
+// phony module name and libnativehelper top level directory.  Putting
+// an empty Android.bp file here prevents the libnativehelper directory
+// from showing up in the dependencies from glob(libnativehelper/Android.bp)
+// b/25797955
