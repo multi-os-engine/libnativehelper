@@ -18,7 +18,8 @@ LOCAL_PATH := $(call my-dir)
 local_src_files := \
     JNIHelp.cpp \
     JniConstants.cpp \
-    toStringArray.cpp
+    toStringArray.cpp \
+    AsynchronousCloseMonitor.cpp
 
 
 #
