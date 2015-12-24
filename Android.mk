@@ -20,7 +20,6 @@ local_src_files := \
     JniConstants.cpp \
     toStringArray.cpp
 
-
 #
 # Build for the target (device).
 #
@@ -28,7 +27,9 @@ local_src_files := \
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
     $(local_src_files) \
-    JniInvocation.cpp
+    JniInvocation.cpp \
+    AsynchronousCloseMonitor.cpp
+
 LOCAL_SHARED_LIBRARIES := liblog
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libnativehelper
@@ -74,6 +75,9 @@ LOCAL_CLANG := true
 LOCAL_SRC_FILES := \
     $(local_src_files) \
     JniInvocation.cpp
+ifeq ($(HOST_OS),linux)
+LOCAL_SRC_FILES += AsynchronousCloseMonitor.cpp
+endif
 LOCAL_CFLAGS := -Werror -fvisibility=protected
 LOCAL_C_INCLUDES := libcore/include
 LOCAL_SHARED_LIBRARIES := liblog
@@ -94,6 +98,9 @@ LOCAL_CLANG := true
 LOCAL_SRC_FILES := \
     $(local_src_files) \
     JniInvocation.cpp
+ifeq ($(HOST_OS),linux)
+LOCAL_SRC_FILES += AsynchronousCloseMonitor.cpp
+endif
 LOCAL_CFLAGS := -Werror -fvisibility=protected
 LOCAL_C_INCLUDES := libcore/include
 LOCAL_STATIC_LIBRARIES := liblog
