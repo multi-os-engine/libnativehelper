@@ -26,7 +26,7 @@
 #include "cutils/log.h"
 
 #ifdef __ANDROID__
-#include "cutils/properties.h"
+#include <sys/system_properties.h>
 #endif
 
 JniInvocation* JniInvocation::jni_invocation_ = NULL;
@@ -51,7 +51,6 @@ JniInvocation::~JniInvocation() {
 #ifdef __ANDROID__
 static const char* kLibrarySystemProperty = "persist.sys.dalvik.vm.lib.2";
 static const char* kDebuggableSystemProperty = "ro.debuggable";
-static const char* kDebuggableFallback = "0";  // Not debuggable.
 #endif
 static const char* kLibraryFallback = "libart.so";
 
@@ -61,8 +60,8 @@ const char* JniInvocation::GetLibrary(const char* library, char* buffer) {
 #ifdef __ANDROID__
   const char* default_library;
 
-  char debuggable[PROPERTY_VALUE_MAX];
-  property_get(kDebuggableSystemProperty, debuggable, kDebuggableFallback);
+  char debuggable[PROP_VALUE_MAX];
+  __system_property_get(kDebuggableSystemProperty, debuggable);
 
   if (strcmp(debuggable, "1") != 0) {
     // Not a debuggable build.
@@ -76,8 +75,11 @@ const char* JniInvocation::GetLibrary(const char* library, char* buffer) {
     // Accept the library parameter. For the case it is NULL, load the default
     // library from the system property.
     if (buffer != NULL) {
-      property_get(kLibrarySystemProperty, buffer, kLibraryFallback);
-      default_library = buffer;
+      if (__system_property_get(kLibrarySystemProperty, buffer) > 0) {
+        default_library = buffer;
+      } else {
+        default_library = kLibraryFallback;
+      }
     } else {
       // No buffer given, just use default fallback.
       default_library = kLibraryFallback;
@@ -96,7 +98,7 @@ const char* JniInvocation::GetLibrary(const char* library, char* buffer) {
 
 bool JniInvocation::Init(const char* library) {
 #ifdef __ANDROID__
-  char buffer[PROPERTY_VALUE_MAX];
+  char buffer[PROP_VALUE_MAX];
 #else
   char* buffer = NULL;
 #endif
