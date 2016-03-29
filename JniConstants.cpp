@@ -22,6 +22,12 @@
 
 #include <stdlib.h>
 
+#include <atomic>
+#include <mutex>
+
+static std::atomic<bool> g_constants_initialized(false);
+static std::mutex g_constants_mutex;
+
 jclass JniConstants::bigDecimalClass;
 jclass JniConstants::booleanClass;
 jclass JniConstants::byteArrayClass;
@@ -88,6 +94,19 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
+    // Fast check
+    if (g_constants_initialized) {
+      // already initialized
+      return;
+    }
+
+    // Slightly slower check
+    std::lock_guard<std::mutex> guard(g_constants_mutex);
+    if (g_constants_initialized) {
+      // already initialized
+      return;
+    }
+
     bigDecimalClass = findClass(env, "java/math/BigDecimal");
     booleanClass = findClass(env, "java/lang/Boolean");
     byteClass = findClass(env, "java/lang/Byte");
@@ -142,4 +161,6 @@ void JniConstants::init(JNIEnv* env) {
     structUtsnameClass = findClass(env, "android/system/StructUtsname");
     unixSocketAddressClass = findClass(env, "android/system/UnixSocketAddress");
     zipEntryClass = findClass(env, "java/util/zip/ZipEntry");
+
+    g_constants_initialized = true;
 }
