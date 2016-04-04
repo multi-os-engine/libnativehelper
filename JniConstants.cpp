@@ -67,6 +67,7 @@ jclass JniConstants::referenceClass;
 jclass JniConstants::shortClass;
 jclass JniConstants::socketClass;
 jclass JniConstants::socketImplClass;
+jclass JniConstants::socketTaggerClass;
 jclass JniConstants::stringClass;
 jclass JniConstants::structAddrinfoClass;
 jclass JniConstants::structFlockClass;
@@ -145,6 +146,7 @@ void JniConstants::init(JNIEnv* env) {
     referenceClass = findClass(env, "java/lang/ref/Reference");
     shortClass = findClass(env, "java/lang/Short");
     socketClass = findClass(env, "java/net/Socket");
+    socketTaggerClass = findClass(env, "dalvik/system/SocketTagger");
     socketImplClass = findClass(env, "java/net/SocketImpl");
     stringClass = findClass(env, "java/lang/String");
     structAddrinfoClass = findClass(env, "android/system/StructAddrinfo");
