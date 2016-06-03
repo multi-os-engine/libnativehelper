@@ -103,8 +103,12 @@ bool JniInvocation::Init(const char* library) {
   char* buffer = NULL;
 #endif
   library = GetLibrary(library, buffer);
-
-  handle_ = dlopen(library, RTLD_NOW);
+  // Load with RTLD_NODELETE in order to ensure that libart.so is not unmapped when it is closed.
+  // This is due to the fact that it is possible that some threads might have yet to finish
+  // exiting even after JNI_DeleteJavaVM returns, which can lead to segfaults if the library is
+  // unloaded.
+  const int kDlopenFlags = RTLD_NOW | RTLD_NODELETE;
+  handle_ = dlopen(library, kDlopenFlags);
   if (handle_ == NULL) {
     if (strcmp(library, kLibraryFallback) == 0) {
       // Nothing else to try.
@@ -119,7 +123,7 @@ bool JniInvocation::Init(const char* library) {
     ALOGW("Falling back from %s to %s after dlopen error: %s",
           library, kLibraryFallback, dlerror());
     library = kLibraryFallback;
-    handle_ = dlopen(library, RTLD_NOW);
+    handle_ = dlopen(library, kDlopenFlags);
     if (handle_ == NULL) {
       ALOGE("Failed to dlopen %s: %s", library, dlerror());
       return false;
