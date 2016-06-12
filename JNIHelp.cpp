@@ -17,6 +17,8 @@
 #if defined(__ANDROID__)
 /* libnativehelper is built by NDK 19 in one variant, which doesn't yet have the GNU strerror_r. */
 #undef _GNU_SOURCE
+/* ...but this code uses asprintf, which is a BSD/GNU extension. */
+#define _BSD_SOURCE
 #endif
 
 #define LOG_TAG "JNIHelp"
