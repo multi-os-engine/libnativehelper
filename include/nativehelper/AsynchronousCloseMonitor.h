@@ -43,7 +43,7 @@
  */
 class AsynchronousCloseMonitor {
 public:
-    AsynchronousCloseMonitor(int fd);
+    explicit AsynchronousCloseMonitor(int fd);
     ~AsynchronousCloseMonitor();
     bool wasSignaled() const;
 
