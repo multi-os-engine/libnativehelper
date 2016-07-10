@@ -37,6 +37,7 @@ jclass JniConstants::errnoExceptionClass;
 jclass JniConstants::fileDescriptorClass;
 jclass JniConstants::gaiExceptionClass;
 jclass JniConstants::inet6AddressClass;
+jclass JniConstants::inet6AddressHolderClass;
 jclass JniConstants::inetAddressClass;
 jclass JniConstants::inetAddressHolderClass;
 jclass JniConstants::inetSocketAddressClass;
@@ -100,6 +101,7 @@ void JniConstants::init(JNIEnv* env) {
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     gaiExceptionClass = findClass(env, "android/system/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
+    inet6AddressHolderClass = findClass(env, "java/net/Inet6Address$Inet6AddressHolder");
     inetAddressClass = findClass(env, "java/net/InetAddress");
     inetAddressHolderClass = findClass(env, "java/net/InetAddress$InetAddressHolder");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
