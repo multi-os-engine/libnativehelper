@@ -17,7 +17,6 @@
 #ifndef ASYNCHRONOUS_CLOSE_MONITOR_H_included
 #define ASYNCHRONOUS_CLOSE_MONITOR_H_included
 
-#include "ScopedPthreadMutexLock.h"
 #include <pthread.h>
 
 /**

@@ -35,7 +35,6 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libnativehelper
 LOCAL_CLANG := true
 LOCAL_CFLAGS := -Werror -fvisibility=protected
-LOCAL_C_INCLUDES := libcore/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES += libdl
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -80,7 +79,6 @@ ifeq ($(HOST_OS),linux)
 LOCAL_SRC_FILES += AsynchronousCloseMonitor.cpp
 endif
 LOCAL_CFLAGS := -Werror -fvisibility=protected
-LOCAL_C_INCLUDES := libcore/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := liblog
 LOCAL_LDFLAGS := -ldl
@@ -104,7 +102,6 @@ ifeq ($(HOST_OS),linux)
 LOCAL_SRC_FILES += AsynchronousCloseMonitor.cpp
 endif
 LOCAL_CFLAGS := -Werror -fvisibility=protected
-LOCAL_C_INCLUDES := libcore/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := liblog
 LOCAL_LDFLAGS := -ldl
