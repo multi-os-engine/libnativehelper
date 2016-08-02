@@ -69,6 +69,13 @@ cc_library_shared {
     stl: "c++_static",
 }
 
+ndk_headers {
+    name: "ndk_jni.h",
+    from: "include/nativehelper",
+    to: "",
+    srcs: ["include/nativehelper/jni.h"],
+}
+
 //
 // Tests.
 //
