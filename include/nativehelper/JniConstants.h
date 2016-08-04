@@ -48,6 +48,7 @@ struct JniConstants {
     static jclass fileDescriptorClass;
     static jclass gaiExceptionClass;
     static jclass inet6AddressClass;
+    static jclass inet6AddressHolderClass;
     static jclass inetAddressClass;
     static jclass inetAddressHolderClass;
     static jclass inetSocketAddressClass;
