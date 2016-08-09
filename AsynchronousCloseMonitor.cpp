@@ -34,17 +34,31 @@
 static pthread_mutex_t blockedThreadListMutex = PTHREAD_MUTEX_INITIALIZER;
 static AsynchronousCloseMonitor* blockedThreadList = NULL;
 
+// MOE TODO: I am not sure whether the MinGW's pthread_kill implementation can resume
+// threads under any kind of suspension.
+
 /**
  * The specific signal chosen here is arbitrary, but bionic needs to know so that SIGRTMIN
  * starts at a higher value.
  */
+#ifndef MOE
 static const int BLOCKED_THREAD_SIGNAL = __SIGRTMIN + 2;
+#else
+# ifndef MOE_WINDOWS
+static const int BLOCKED_THREAD_SIGNAL = SIGUSR2;
+# else
+// MOE: NSIG is in the signal interval for which the pthread_kill implementation will
+// send a pthread_cancel.
+static const int BLOCKED_THREAD_SIGNAL = NSIG;
+# endif
+#endif
 
 static void blockedThreadSignalHandler(int /*signal*/) {
     // Do nothing. We only sent this signal for its side-effect of interrupting syscalls.
 }
 
 void AsynchronousCloseMonitor::init() {
+#ifndef MOE_WINDOWS
     // Ensure that the signal we send interrupts system calls but doesn't kill threads.
     // Using sigaction(2) lets us ensure that the SA_RESTART flag is not set.
     // (The whole reason we're sending this signal is to unblock system calls!)
@@ -56,6 +70,7 @@ void AsynchronousCloseMonitor::init() {
     if (rc == -1) {
         ALOGE("setting blocked thread signal handler failed: %s", strerror(errno));
     }
+#endif
 }
 
 void AsynchronousCloseMonitor::signalBlockedThreads(int fd) {
