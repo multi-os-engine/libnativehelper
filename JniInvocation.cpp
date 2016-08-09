@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014-2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +59,7 @@ static const char* kLibraryFallback = "libart.so";
 template<typename T> void UNUSED(const T&) {}
 
 const char* JniInvocation::GetLibrary(const char* library, char* buffer) {
+#ifndef MOE
 #ifdef __ANDROID__
   const char* default_library;
 
@@ -90,6 +92,7 @@ const char* JniInvocation::GetLibrary(const char* library, char* buffer) {
   if (library == NULL) {
     library = default_library;
   }
+#endif
 
   return library;
 }
@@ -167,6 +170,7 @@ JniInvocation& JniInvocation::GetJniInvocation() {
   return *jni_invocation_;
 }
 
+#ifndef MOE
 extern "C" jint JNI_GetDefaultJavaVMInitArgs(void* vm_args) {
   return JniInvocation::GetJniInvocation().JNI_GetDefaultJavaVMInitArgs(vm_args);
 }
@@ -178,3 +182,4 @@ extern "C" jint JNI_CreateJavaVM(JavaVM** p_vm, JNIEnv** p_env, void* vm_args) {
 extern "C" jint JNI_GetCreatedJavaVMs(JavaVM** vms, jsize size, jsize* vm_count) {
   return JniInvocation::GetJniInvocation().JNI_GetCreatedJavaVMs(vms, size, vm_count);
 }
+#endif
