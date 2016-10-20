@@ -74,6 +74,7 @@ ndk_headers {
     from: "include/nativehelper",
     to: "",
     srcs: ["include/nativehelper/jni.h"],
+    license: "NOTICE",
 }
 
 //
