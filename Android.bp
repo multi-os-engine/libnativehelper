@@ -82,9 +82,9 @@ cc_library_shared {
 
 ndk_headers {
     name: "ndk_jni.h",
-    from: "include/nativehelper",
+    from: "include_jni",
     to: "",
-    srcs: ["include/nativehelper/jni.h"],
+    srcs: ["include_jni/jni.h"],
     license: "NOTICE",
 }
 
