@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "JniInvocation.h"
+#include <nativehelper/JniInvocation.h>
 
 #include <dlfcn.h>
 #include <stdlib.h>
