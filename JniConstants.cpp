@@ -17,8 +17,8 @@
 #define LOG_TAG "JniConstants"
 
 #include "ALog-priv.h"
-#include "JniConstants.h"
-#include "ScopedLocalRef.h"
+#include <nativehelper/JniConstants.h>
+#include <nativehelper/ScopedLocalRef.h>
 
 #include <stdlib.h>
 
