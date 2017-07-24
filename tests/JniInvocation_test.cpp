@@ -16,7 +16,7 @@
 
 #define LOG_TAG "NativeBridge_test"
 
-#include <JniInvocation.h>
+#include <nativehelper/JniInvocation.h>
 #include <gtest/gtest.h>
 
 
