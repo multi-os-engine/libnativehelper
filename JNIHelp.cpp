@@ -23,8 +23,8 @@
 
 #define LOG_TAG "JNIHelp"
 
-#include "JniConstants.h"
-#include "JNIHelp.h"
+#include <nativehelper/JniConstants.h>
+#include <nativehelper/JNIHelp.h>
 #include "ALog-priv.h"
 
 #include <stdio.h>
