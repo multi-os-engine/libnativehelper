@@ -56,7 +56,6 @@ jclass JniConstants::stringClass;
 jclass JniConstants::structAddrinfoClass;
 jclass JniConstants::structFlockClass;
 jclass JniConstants::structGroupReqClass;
-jclass JniConstants::structGroupSourceReqClass;
 jclass JniConstants::structIfaddrs;
 jclass JniConstants::structLingerClass;
 jclass JniConstants::structPasswdClass;
@@ -122,7 +121,6 @@ void JniConstants::init(JNIEnv* env) {
     structAddrinfoClass = findClass(env, "android/system/StructAddrinfo");
     structFlockClass = findClass(env, "android/system/StructFlock");
     structGroupReqClass = findClass(env, "android/system/StructGroupReq");
-    structGroupSourceReqClass = findClass(env, "android/system/StructGroupSourceReq");
     structIfaddrs = findClass(env, "android/system/StructIfaddrs");
     structLingerClass = findClass(env, "android/system/StructLinger");
     structPasswdClass = findClass(env, "android/system/StructPasswd");
