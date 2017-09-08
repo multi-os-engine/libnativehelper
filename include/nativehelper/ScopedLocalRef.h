@@ -17,9 +17,9 @@
 #ifndef SCOPED_LOCAL_REF_H_included
 #define SCOPED_LOCAL_REF_H_included
 
-#include "jni.h"
+#include <cstddef>
 
-#include <stddef.h>
+#include "jni.h"
 #include "JNIHelp.h"  // for DISALLOW_COPY_AND_ASSIGN.
 
 // A smart pointer that deletes a JNI local reference when it goes out of scope.
@@ -51,6 +51,35 @@ public:
     T get() const {
         return mLocalRef;
     }
+
+// Some better C++11 support.
+#if __cplusplus >= 201103L
+    // Move constructor.
+    ScopedLocalRef(ScopedLocalRef&& s) : mEnv(s.mEnv), mLocalRef(s.release()) {
+        s.mEnv = nullptr;
+    }
+
+    // Empty constructor now makes sense, as we can move-assign.
+    ScopedLocalRef() : mEnv(nullptr), mLocalRef(nullptr) {
+    }
+
+    // Move assignment operator.
+    ScopedLocalRef& operator=(ScopedLocalRef&& s) {
+        reset(s.release());
+        mEnv = s.mEnv;
+        s.mEnv = nullptr;
+    }
+
+    // Allows "if (scoped_ref == nullptr)"
+    bool operator==(std::nullptr_t) const {
+        return mLocalRef == nullptr;
+    }
+
+    // Allows "if (scoped_ref != nullptr)"
+    bool operator!=(std::nullptr_t) const {
+        return mLocalRef != nullptr;
+    }
+#endif
 
 private:
     JNIEnv* const mEnv;
