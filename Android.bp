@@ -46,7 +46,7 @@ cc_library {
         },
     },
 
-    header_libs: ["jni_headers"],
+    header_libs: ["jni_headers", "jni_platform_headers"],
     export_header_lib_headers: ["jni_headers"],
 
     shared_libs: [
@@ -73,6 +73,7 @@ cc_library_shared {
         "include/nativehelper", // TODO(b/63762847): remove
     ],
     cflags: ["-Werror"],
+    include_dirs: ["libnativehelper/platform_include"],
     srcs: [
         "JNIHelp.cpp",
         "JniConstants.cpp",
