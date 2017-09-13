@@ -17,7 +17,9 @@
 #define LOG_TAG "JniConstants"
 
 #include "ALog-priv.h"
+#include "JNIHelp-priv.h"
 #include <nativehelper/JniConstants.h>
+#include <nativehelper/JniConstants-priv.h>
 #include <nativehelper/ScopedLocalRef.h>
 
 #include <stdlib.h>
@@ -137,4 +139,13 @@ void JniConstants::init(JNIEnv* env) {
     zipEntryClass = findClass(env, "java/util/zip/ZipEntry");
 
     g_constants_initialized = true;
+}
+
+namespace android {
+
+void ClearJniConstantsCache() {
+    g_constants_initialized = false;
+    ClearJNIHelpLocalCache();
+}
+
 }
