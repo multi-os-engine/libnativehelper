@@ -38,11 +38,9 @@ cc_library {
     target: {
         android: {
             srcs: ["AsynchronousCloseMonitor.cpp"],
-            shared_libs: ["libdl"],
         },
         linux: {
             srcs: ["AsynchronousCloseMonitor.cpp"],
-            host_ldlibs: ["-ldl"],
         },
     },
 
