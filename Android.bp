@@ -36,10 +36,7 @@ cc_library {
     ],
 
     target: {
-        android: {
-            srcs: ["AsynchronousCloseMonitor.cpp"],
-        },
-        linux_glibc: {
+        linux: {
             srcs: ["AsynchronousCloseMonitor.cpp"],
         },
     },
