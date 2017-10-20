@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef SCOPED_LOCAL_REF_H_included
-#define SCOPED_LOCAL_REF_H_included
+#ifndef SCOPED_LOCAL_FRAME_H_
+#define SCOPED_LOCAL_FRAME_H_
 
-#include "JNIHelp.h"
-#include <nativehelper/scoped_local_ref.h>
+#include "jni.h"
 
-#endif  // SCOPED_LOCAL_REF_H_included
+class ScopedLocalFrame {
+public:
+    explicit ScopedLocalFrame(JNIEnv* env) : mEnv(env) {
+        mEnv->PushLocalFrame(128);
+    }
+
+    ~ScopedLocalFrame() {
+        mEnv->PopLocalFrame(NULL);
+    }
+
+private:
+    JNIEnv* const mEnv;
+
+    DISALLOW_COPY_AND_ASSIGN(ScopedLocalFrame);
+};
+
+#endif  // SCOPED_LOCAL_FRAME_H_
