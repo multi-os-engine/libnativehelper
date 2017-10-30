@@ -112,8 +112,8 @@ void JniConstants::init(JNIEnv* env) {
     integerClass = findClass(env, "java/lang/Integer");
     localeDataClass = findClass(env, "libcore/icu/LocaleData");
     longClass = findClass(env, "java/lang/Long");
-    mutableIntClass = findClass(env, "android/util/MutableInt");
-    mutableLongClass = findClass(env, "android/util/MutableLong");
+    mutableIntClass = findClass(env, "libcore/util/MutableInt");
+    mutableLongClass = findClass(env, "libcore/util/MutableLong");
     netlinkSocketAddressClass = findClass(env, "android/system/NetlinkSocketAddress");
     packetSocketAddressClass = findClass(env, "android/system/PacketSocketAddress");
     patternSyntaxExceptionClass = findClass(env, "java/util/regex/PatternSyntaxException");
