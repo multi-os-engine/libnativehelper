@@ -47,8 +47,6 @@ jclass JniConstants::inetSocketAddressHolderClass;
 jclass JniConstants::integerClass;
 jclass JniConstants::localeDataClass;
 jclass JniConstants::longClass;
-jclass JniConstants::mutableIntClass;
-jclass JniConstants::mutableLongClass;
 jclass JniConstants::netlinkSocketAddressClass;
 jclass JniConstants::packetSocketAddressClass;
 jclass JniConstants::patternSyntaxExceptionClass;
@@ -112,8 +110,6 @@ void JniConstants::init(JNIEnv* env) {
     integerClass = findClass(env, "java/lang/Integer");
     localeDataClass = findClass(env, "libcore/icu/LocaleData");
     longClass = findClass(env, "java/lang/Long");
-    mutableIntClass = findClass(env, "libcore/util/MutableInt");
-    mutableLongClass = findClass(env, "libcore/util/MutableLong");
     netlinkSocketAddressClass = findClass(env, "android/system/NetlinkSocketAddress");
     packetSocketAddressClass = findClass(env, "android/system/PacketSocketAddress");
     patternSyntaxExceptionClass = findClass(env, "java/util/regex/PatternSyntaxException");
