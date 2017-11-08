@@ -80,7 +80,6 @@ cc_library_shared {
     export_include_dirs: [
         "header_only_include",
         "include",
-        "include/nativehelper", // TODO(b/63762847): remove
     ],
     cflags: ["-Werror"],
     include_dirs: [
