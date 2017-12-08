@@ -17,6 +17,10 @@
 #ifndef SCOPED_PRIMITIVE_ARRAY_H_
 #define SCOPED_PRIMITIVE_ARRAY_H_
 
+#include <type_traits>
+
+#include <sys/types.h>  // For ssize_t
+
 #include "jni.h"
 #include "nativehelper_utils.h"
 
@@ -26,122 +30,184 @@
 #define POINTER_TYPE(T) T*  /* NOLINT */
 #endif
 
-#ifdef REFERENCE_TYPE
-#error REFERENCE_TYPE is defined.
-#else
-#define REFERENCE_TYPE(T) T&  /* NOLINT */
-#endif
+template<typename JType> struct ScopedPrimitiveArrayTraits {};
 
-// ScopedBooleanArrayRO, ScopedByteArrayRO, ScopedCharArrayRO, ScopedDoubleArrayRO,
-// ScopedFloatArrayRO, ScopedIntArrayRO, ScopedLongArrayRO, and ScopedShortArrayRO provide
-// convenient read-only access to Java arrays from JNI code. This is cheaper than read-write
-// access and should be used by default.
-#define INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(PRIMITIVE_TYPE, NAME) \
-    class Scoped ## NAME ## ArrayRO { \
-    public: \
-        explicit Scoped ## NAME ## ArrayRO(JNIEnv* env) \
-        : mEnv(env), mJavaArray(NULL), mRawArray(NULL), mSize(0) {} \
-        Scoped ## NAME ## ArrayRO(JNIEnv* env, PRIMITIVE_TYPE ## Array javaArray) \
-        : mEnv(env) { \
-            if (javaArray == NULL) { \
-                mJavaArray = NULL; \
-                mSize = 0; \
-                mRawArray = NULL; \
-                jniThrowNullPointerException(mEnv, NULL); \
-            } else { \
-                reset(javaArray); \
-            } \
-        } \
-        ~Scoped ## NAME ## ArrayRO() { \
-            if (mRawArray != NULL && mRawArray != mBuffer) { \
-                mEnv->Release ## NAME ## ArrayElements(mJavaArray, mRawArray, JNI_ABORT); \
-            } \
-        } \
-        void reset(PRIMITIVE_TYPE ## Array javaArray) { \
-            mJavaArray = javaArray; \
-            mSize = mEnv->GetArrayLength(mJavaArray); \
-            if (mSize <= buffer_size) { \
-                mEnv->Get ## NAME ## ArrayRegion(mJavaArray, 0, mSize, mBuffer); \
-                mRawArray = mBuffer; \
-            } else { \
-                mRawArray = mEnv->Get ## NAME ## ArrayElements(mJavaArray, NULL); \
-            } \
-        } \
-        const PRIMITIVE_TYPE* get() const { return mRawArray; } \
-        PRIMITIVE_TYPE ## Array getJavaArray() const { return mJavaArray; } \
-        const PRIMITIVE_TYPE& operator[](size_t n) const { return mRawArray[n]; } \
-        size_t size() const { return mSize; } \
-    private: \
-        static const jsize buffer_size = 1024; \
-        JNIEnv* const mEnv; \
-        PRIMITIVE_TYPE ## Array mJavaArray; \
-        POINTER_TYPE(PRIMITIVE_TYPE) mRawArray; \
-        jsize mSize; \
-        PRIMITIVE_TYPE mBuffer[buffer_size]; \
-        DISALLOW_COPY_AND_ASSIGN(Scoped ## NAME ## ArrayRO); \
-    }
+#define ARRAY_TRAITS(ARRAY_TYPE, JTYPE, NAME)                                            \
+template<> struct ScopedPrimitiveArrayTraits<JTYPE> {                                    \
+public:                                                                                  \
+    static inline void getArrayRegion(JNIEnv* env, ARRAY_TYPE array, size_t start,       \
+                                      size_t len, POINTER_TYPE(JTYPE) out) {             \
+        env->Get ## NAME ## ArrayRegion(array, start, len, out);                         \
+    }                                                                                    \
+                                                                                         \
+    static inline POINTER_TYPE(JTYPE) getArrayElements(JNIEnv* env, ARRAY_TYPE array) {  \
+        return env->Get ## NAME ## ArrayElements(array, nullptr);                        \
+    }                                                                                    \
+                                                                                         \
+    static inline void releaseArrayElements(JNIEnv* env, ARRAY_TYPE array,               \
+                                            POINTER_TYPE(JTYPE) buffer, jint mode) {     \
+        env->Release ## NAME ## ArrayElements(array, buffer, mode);                      \
+    }                                                                                    \
+    static inline size_t getArrayLength(JNIEnv* env, ARRAY_TYPE array) {                 \
+        return env->GetArrayLength(array);                                               \
+    }                                                                                    \
+    static inline void fatalError(JNIEnv* env, const char*msg) {                         \
+        env->FatalError(msg);                                                            \
+    }                                                                                    \
+    using ArrayType = ARRAY_TYPE;                                                        \
+};                                                                                       \
 
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jboolean, Boolean);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jbyte, Byte);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jchar, Char);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jdouble, Double);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jfloat, Float);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jint, Int);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jlong, Long);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO(jshort, Short);
+ARRAY_TRAITS(jbooleanArray, jboolean, Boolean)
+ARRAY_TRAITS(jbyteArray, jbyte, Byte)
+ARRAY_TRAITS(jcharArray, jchar, Char)
+ARRAY_TRAITS(jdoubleArray, jdouble, Double)
+ARRAY_TRAITS(jfloatArray, jfloat, Float)
+ARRAY_TRAITS(jintArray, jint, Int)
+ARRAY_TRAITS(jlongArray, jlong, Long)
+ARRAY_TRAITS(jshortArray, jshort, Short)
 
-#undef INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RO
-
-// ScopedBooleanArrayRW, ScopedByteArrayRW, ScopedCharArrayRW, ScopedDoubleArrayRW,
-// ScopedFloatArrayRW, ScopedIntArrayRW, ScopedLongArrayRW, and ScopedShortArrayRW provide
-// convenient read-write access to Java arrays from JNI code. These are more expensive,
-// since they entail a copy back onto the Java heap, and should only be used when necessary.
-#define INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(PRIMITIVE_TYPE, NAME) \
-    class Scoped ## NAME ## ArrayRW { \
-    public: \
-        explicit Scoped ## NAME ## ArrayRW(JNIEnv* env) \
-        : mEnv(env), mJavaArray(NULL), mRawArray(NULL) {} \
-        Scoped ## NAME ## ArrayRW(JNIEnv* env, PRIMITIVE_TYPE ## Array javaArray) \
-        : mEnv(env), mJavaArray(javaArray), mRawArray(NULL) { \
-            if (mJavaArray == NULL) { \
-                jniThrowNullPointerException(mEnv, NULL); \
-            } else { \
-                mRawArray = mEnv->Get ## NAME ## ArrayElements(mJavaArray, NULL); \
-            } \
-        } \
-        ~Scoped ## NAME ## ArrayRW() { \
-            if (mRawArray) { \
-                mEnv->Release ## NAME ## ArrayElements(mJavaArray, mRawArray, 0); \
-            } \
-        } \
-        void reset(PRIMITIVE_TYPE ## Array javaArray) { \
-            mJavaArray = javaArray; \
-            mRawArray = mEnv->Get ## NAME ## ArrayElements(mJavaArray, NULL); \
-        } \
-        const PRIMITIVE_TYPE* get() const { return mRawArray; } \
-        PRIMITIVE_TYPE ## Array getJavaArray() const { return mJavaArray; } \
-        const PRIMITIVE_TYPE& operator[](size_t n) const { return mRawArray[n]; } \
-        POINTER_TYPE(PRIMITIVE_TYPE) get() { return mRawArray; }  \
-        REFERENCE_TYPE(PRIMITIVE_TYPE) operator[](size_t n) { return mRawArray[n]; } \
-        size_t size() const { return mEnv->GetArrayLength(mJavaArray); } \
-    private: \
-        JNIEnv* const mEnv; \
-        PRIMITIVE_TYPE ## Array mJavaArray; \
-        POINTER_TYPE(PRIMITIVE_TYPE) mRawArray; \
-        DISALLOW_COPY_AND_ASSIGN(Scoped ## NAME ## ArrayRW); \
-    }
-
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jboolean, Boolean);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jbyte, Byte);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jchar, Char);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jdouble, Double);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jfloat, Float);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jint, Int);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jlong, Long);
-INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW(jshort, Short);
-
-#undef INSTANTIATE_SCOPED_PRIMITIVE_ARRAY_RW
+#undef ARRAY_TRAITS
 #undef POINTER_TYPE
-#undef REFERENCE_TYPE
+
+template<typename JType, bool kNullable>
+class ScopedArrayRO {
+public:
+    using Traits = ScopedPrimitiveArrayTraits<JType>;
+    using ArrayType = typename Traits::ArrayType;
+    using const_iterator = const JType*;
+
+    // Provides read-only access to Java array from JNI code.
+    // env must not be nullptr.
+    // If kNullable is false, this aborts if javaArray is nullptr.
+    ScopedArrayRO(JNIEnv* env, ArrayType javaArray) : mEnv(env), mJavaArray(javaArray) {
+        if (mJavaArray == nullptr) {
+            mSize = -1;
+            mRawArray = nullptr;
+            if (!kNullable) {
+                Traits::fatalError(mEnv, "javaArray is null");
+            }
+        } else {
+            mSize = Traits::getArrayLength(mEnv, mJavaArray);
+            if (mSize <= BUFFER_SIZE) {
+                Traits::getArrayRegion(mEnv, mJavaArray, 0, mSize, mBuffer);
+                mRawArray = mBuffer;
+            } else {
+                mRawArray = Traits::getArrayElements(mEnv, mJavaArray);
+            }
+        }
+    }
+
+    ~ScopedArrayRO() {
+        if (mRawArray != nullptr && mRawArray != mBuffer) {
+            Traits::releaseArrayElements(mEnv, mJavaArray, mRawArray, JNI_ABORT);
+        }
+    }
+
+    const JType* get() const { return mRawArray; }
+    ArrayType getJavaArray() const { return mJavaArray; }
+    const JType& operator[](size_t n) const { return mRawArray[n]; }
+    const_iterator begin() const { return get(); }
+    const_iterator end() const {
+        return (kNullable && mRawArray == nullptr) ? get() : get() + mSize;
+    }
+
+    using SizeT = typename std::conditional<kNullable, ssize_t, size_t>::type;
+    // In case of nonnull array, the return type is size_t.
+    // In case of nullable array, the return type is ssize_t. Then, will return -1 if this is
+    // constructed with null array.
+    SizeT size() const { return mSize; }
+
+private:
+    // 1024 since there is stack frame size limitation (4096 bytes).
+    constexpr static jsize BUFFER_SIZE = 1024 / sizeof(JType);
+
+    JNIEnv* const mEnv;
+    ArrayType mJavaArray;
+    JType* mRawArray;
+    SizeT mSize;
+
+    // Speed-up JNI array access for small arrays, see I703d7346de732199be1feadbead021c6647a554a
+    // for more details.
+    JType mBuffer[BUFFER_SIZE];
+
+    DISALLOW_COPY_AND_ASSIGN(ScopedArrayRO);
+};
+
+// Scoped***ArrayRO provide convenient read-only access to Java array from JNI code.
+// This is cheaper than read-write access and should be used by default.
+// These abort if nullptr is passed.
+using ScopedBooleanArrayRO = ScopedArrayRO<jboolean, false>;
+using ScopedByteArrayRO = ScopedArrayRO<jbyte, false>;
+using ScopedCharArrayRO = ScopedArrayRO<jchar, false>;
+using ScopedDoubleArrayRO = ScopedArrayRO<jdouble, false>;
+using ScopedFloatArrayRO = ScopedArrayRO<jfloat, false>;
+using ScopedIntArrayRO = ScopedArrayRO<jint, false>;
+using ScopedLongArrayRO = ScopedArrayRO<jlong, false>;
+using ScopedShortArrayRO = ScopedArrayRO<jshort, false>;
+
+// ScopedNullable***ArrayRO also provide convenient read-only access to Java array from JNI code.
+// These accept nullptr. In that case, get() returns nullptr and size() returns -1.
+using ScopedNullableBooleanArrayRO = ScopedArrayRO<jboolean, true>;
+using ScopedNullableByteArrayRO = ScopedArrayRO<jbyte, true>;
+using ScopedNullableCharArrayRO = ScopedArrayRO<jchar, true>;
+using ScopedNullableDoubleArrayRO = ScopedArrayRO<jdouble, true>;
+using ScopedNullableFloatArrayRO = ScopedArrayRO<jfloat, true>;
+using ScopedNullableIntArrayRO = ScopedArrayRO<jint, true>;
+using ScopedNullableLongArrayRO = ScopedArrayRO<jlong, true>;
+using ScopedNullableShortArrayRO = ScopedArrayRO<jshort, true>;
+
+template<typename JType>
+class ScopedArrayRW {
+public:
+    using Traits = ScopedPrimitiveArrayTraits<JType>;
+    using ArrayType = typename Traits::ArrayType;
+    using const_iterator = const JType*;
+    using iterator = JType*;
+
+    ScopedArrayRW(JNIEnv* env, ArrayType javaArray) : mEnv(env), mJavaArray(javaArray) {
+        if (mJavaArray == nullptr) {
+            Traits::fatalError(mEnv, "javaArray is null");
+        } else {
+            mSize = Traits::getArrayLength(mEnv, mJavaArray);
+            mRawArray = Traits::getArrayElements(mEnv, mJavaArray);
+        }
+    }
+    ~ScopedArrayRW() {
+        if (mRawArray != nullptr) {
+            Traits::releaseArrayElements(mEnv, mJavaArray, mRawArray, 0);
+        }
+    }
+
+    const JType* get() const { return mRawArray; }
+    ArrayType getJavaArray() const { return mJavaArray; }
+    const JType& operator[](size_t n) const { return mRawArray[n]; }
+    const_iterator cbegin() const { return get(); }
+    const_iterator cend() const { return get() + mSize; }
+    JType* get() { return mRawArray; }
+    JType& operator[](size_t n) { return mRawArray[n]; }
+    iterator begin() { return get(); }
+    iterator end() { return get() + mSize; }
+    size_t size() const { return mSize; }
+
+private:
+    JNIEnv* const mEnv;
+    ArrayType mJavaArray;
+    JType* mRawArray;
+    jsize mSize;
+    DISALLOW_COPY_AND_ASSIGN(ScopedArrayRW);
+};
+
+// Scoped***ArrayRW provide convenient read-write access to Java arrays from JNI code.
+// These are more expensive, since they entail a copy back onto the Java heap, and should only be
+// used when necessary.
+// These abort if nullptr is passed.
+using ScopedBooleanArrayRW = ScopedArrayRW<jboolean>;
+using ScopedByteArrayRW = ScopedArrayRW<jbyte>;
+using ScopedCharArrayRW = ScopedArrayRW<jchar>;
+using ScopedDoubleArrayRW = ScopedArrayRW<jdouble>;
+using ScopedFloatArrayRW = ScopedArrayRW<jfloat>;
+using ScopedIntArrayRW = ScopedArrayRW<jint>;
+using ScopedLongArrayRW = ScopedArrayRW<jlong>;
+using ScopedShortArrayRW = ScopedArrayRW<jshort>;
 
 #endif  // SCOPED_PRIMITIVE_ARRAY_H_
