@@ -32,13 +32,13 @@ struct TestContext {
 
     int getArrayElementsCallCount = 0;
     int releaseArrayElementsCallCount = 0;
-    bool NPEThrown = false;
+    bool aborted = false;
     bool elementsUpdated = false;
 
     void resetCallCount() {
         getArrayElementsCallCount = 0;
         releaseArrayElementsCallCount = 0;
-        NPEThrown = false;
+        aborted = false;
         elementsUpdated = false;
     }
 
@@ -72,8 +72,8 @@ public:
         return array == LARGE_ARRAY ? LARGE_ARRAY_SIZE : SMALL_ARRAY_SIZE;
     }
 
-    static inline void throwNullPointerException(JNIEnv* env) {
-        reinterpret_cast<TestContext*>(env)->NPEThrown = true;
+    static inline void fatalError(JNIEnv* env, const char*) {
+        reinterpret_cast<TestContext*>(env)->aborted = true;
     }
 
     using ArrayType = jTestTypeArray;
@@ -99,7 +99,7 @@ TEST(ScopedPrimitiveArrayTest, testNonNullArray) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_FALSE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
@@ -114,13 +114,13 @@ TEST(ScopedPrimitiveArrayTest, testNonNullArray) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_FALSE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
         {
             ScopedArrayRO<TestType, false /* non null */> array(env, nullptr);
-            EXPECT_TRUE(context.NPEThrown);
+            EXPECT_TRUE(context.aborted);
         }
     }
 }
@@ -145,7 +145,7 @@ TEST(ScopedPrimitiveArrayTest, testNullableArray) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_FALSE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
@@ -159,7 +159,7 @@ TEST(ScopedPrimitiveArrayTest, testNullableArray) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_FALSE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
@@ -173,7 +173,7 @@ TEST(ScopedPrimitiveArrayTest, testNullableArray) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_FALSE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
 }
 
@@ -197,7 +197,7 @@ TEST(ScopedPrimitiveArrayTest, testArrayRW) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_TRUE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
@@ -211,13 +211,13 @@ TEST(ScopedPrimitiveArrayTest, testArrayRW) {
         }
         EXPECT_EQ(context.getArrayElementsCallCount, context.releaseArrayElementsCallCount);
         EXPECT_TRUE(context.memoryUpdated());
-        EXPECT_FALSE(context.NPEThrown);
+        EXPECT_FALSE(context.aborted);
     }
     {
         context.resetCallCount();
         {
             ScopedArrayRW<TestType> array(env, nullptr);
-            EXPECT_TRUE(context.NPEThrown);
+            EXPECT_TRUE(context.aborted);
         }
     }
 }
