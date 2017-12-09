@@ -51,8 +51,8 @@ public:                                                                         
     static inline size_t getArrayLength(JNIEnv* env, ARRAY_TYPE array) {                 \
         return env->GetArrayLength(array);                                               \
     }                                                                                    \
-    static inline void throwNullPointerException(JNIEnv* env) {                          \
-        jniThrowNullPointerException(env, nullptr);                                      \
+    static inline void fatalError(JNIEnv* env, const char*msg) {                         \
+        env->FatalError(msg);                                                            \
     }                                                                                    \
     using ArrayType = ARRAY_TYPE;                                                        \
 };                                                                                       \
@@ -84,7 +84,7 @@ public:
             mSize = -1;
             mRawArray = nullptr;
             if (!kNullable) {
-                Traits::throwNullPointerException(mEnv);
+                Traits::fatalError(mEnv, "javaArray is null");
             }
         } else {
             mSize = Traits::getArrayLength(mEnv, mJavaArray);
@@ -166,7 +166,7 @@ public:
 
     ScopedArrayRW(JNIEnv* env, ArrayType javaArray) : mEnv(env), mJavaArray(javaArray) {
         if (mJavaArray == nullptr) {
-            Traits::throwNullPointerException(mEnv);
+            Traits::fatalError(mEnv, "javaArray is null");
         } else {
             mSize = Traits::getArrayLength(mEnv, mJavaArray);
             mRawArray = Traits::getArrayElements(mEnv, mJavaArray);
